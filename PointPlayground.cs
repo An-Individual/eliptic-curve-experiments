@@ -13,7 +13,7 @@ namespace ECExperiments
 {
     public class PointPlayground
     {
-        private const string STOP_CMD = "stop";
+        private const string EXIT_CMD = "exit";
         private const string HELP_CMD = "help";
         private const string CURVE_CMD = "curve";
         private const string LIST_CMD = "list";
@@ -68,7 +68,7 @@ namespace ECExperiments
             {
                 string input = Console.ReadLine();
 
-                if (string.Equals(input, STOP_CMD, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(input, EXIT_CMD, StringComparison.OrdinalIgnoreCase))
                 {
                     result = BigInteger.Zero;
                     return false;
@@ -86,7 +86,7 @@ namespace ECExperiments
                     return true;
                 }
 
-                Console.WriteLine($"Input not recognized. Input must be an integer, a hex string starting with '0x', or the command '{STOP_CMD}' to exit");
+                Console.WriteLine($"Input not recognized. Input must be an integer, a hex string starting with '0x', or the command '{EXIT_CMD}' to exit");
             }
         }
 
@@ -96,11 +96,13 @@ namespace ECExperiments
         {
             while (true)
             {
+                Console.Write("Command: ");
+
                 string command = Console.ReadLine().Trim();
 
                 try
                 {
-                    if (string.Equals(command, STOP_CMD, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(command, EXIT_CMD, StringComparison.OrdinalIgnoreCase))
                     {
                         return;
                     }
@@ -179,7 +181,7 @@ namespace ECExperiments
             Console.WriteLine("    <number>: An integer or a hex string that starts with '0x'.");
             Console.WriteLine("     <point>: A new point in the format (<number>,<number>) or a <point_name>.");
             Console.WriteLine("Commands:");
-            Console.WriteLine("                             stop: Exit the program.");
+            Console.WriteLine("                             exit: Exit the program.");
             Console.WriteLine("                             help: Repeat these instructions.");
             Console.WriteLine("                            curve: Prints the curve information.");
             Console.WriteLine("                             list: Lists all stored points.");
