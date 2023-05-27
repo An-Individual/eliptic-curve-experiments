@@ -54,6 +54,8 @@ namespace ECExperiments
                     }
 
                     RunExperiment(experiment, new string[] { });
+
+                    Console.WriteLine();
                 }
                 catch (Exception ex)
                 {
