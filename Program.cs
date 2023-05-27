@@ -46,25 +46,32 @@ namespace ECExperiments
 
             while (true)
             {
-                if(!ReadExperiment(out string experiment))
+                try
                 {
-                    return;
-                }
+                    if (!ReadExperiment(out string experiment))
+                    {
+                        return;
+                    }
 
-                RunExperiment(experiment, new string[] { });
+                    RunExperiment(experiment, new string[] { });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
             }
         }
 
         private static bool ReadExperiment(out string experiment)
         {
             Console.WriteLine("Select an experiment or enter 'exit' to leave?");
-            Console.WriteLine(PLAYGROUND);
-            Console.WriteLine(WIF_PARSER);
-            Console.WriteLine(MAKE_KEY);
-            Console.WriteLine(SIGNER);
-            Console.WriteLine(VALIDATOR);
-            Console.WriteLine(ENCRYPTOR);
-            Console.WriteLine(DECRYPTOR);
+            Console.WriteLine("    " + PLAYGROUND);
+            Console.WriteLine("    " + WIF_PARSER);
+            Console.WriteLine("    " + MAKE_KEY);
+            Console.WriteLine("    " + SIGNER);
+            Console.WriteLine("    " + VALIDATOR);
+            Console.WriteLine("    " + ENCRYPTOR);
+            Console.WriteLine("    " + DECRYPTOR);
 
             experiment = null;
 
