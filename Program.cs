@@ -113,6 +113,7 @@ namespace ECExperiments
                     MakeSignature(args);
                     break;
                 case VALIDATOR:
+                    ValidateSignature(args);
                     break;
                 case ENCRYPTOR:
                     break;
@@ -200,7 +201,7 @@ namespace ECExperiments
             }
             else
             {
-                Console.WriteLine("Enter the private key to use as a hex string:");
+                Console.WriteLine("Enter a private key as a hex string:");
                 string hexString = Console.ReadLine().Trim();
                 privateKey = Convert.FromHexString(hexString);
             }
@@ -235,6 +236,71 @@ namespace ECExperiments
 
             Console.WriteLine("Signature:");
             Console.WriteLine("    " + Convert.ToHexString(signature));
+        }
+
+        private static void ValidateSignature(string[] args)
+        {
+            ECEncryptor encryptor = new ECEncryptor(WeierstrasCurve.secp256k1);
+
+            byte[] publicKey;
+            if (args.Length > 0)
+            {
+                publicKey = Convert.FromHexString(args[0]);
+            }
+            else
+            {
+                Console.WriteLine("Enter the public key as a hex string:");
+                string hexString = Console.ReadLine().Trim();
+                publicKey = Convert.FromHexString(hexString);
+            }
+
+            encryptor.ImportPublicKey(publicKey);
+
+            byte[] signature;
+            if (args.Length > 1)
+            {
+                signature = Convert.FromHexString(args[1]);
+            }
+            else
+            {
+                Console.WriteLine("Enter the signature as a hex string:");
+                string hexString = Console.ReadLine().Trim();
+                signature = Convert.FromHexString(hexString);
+            }
+
+            string filePath;
+            if (args.Length > 2)
+            {
+                filePath = args[2];
+            }
+            else
+            {
+                Console.WriteLine("Enter the path to the file that was signed:");
+                filePath = Console.ReadLine().Trim();
+            }
+
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File does not exist.");
+                return;
+            }
+
+            Console.WriteLine("Reading file...");
+            byte[] fileData = File.ReadAllBytes(filePath);
+
+            Console.WriteLine("Hashing file with SHA256...");
+            byte[] hash = SHA256.HashData(fileData);
+
+            Console.WriteLine("Validating signature...");
+            
+            if(encryptor.VerifySignature(hash, signature))
+            {
+                Console.WriteLine("Signature is Valid");
+            }
+            else
+            {
+                Console.WriteLine("Signature is Invalid");
+            }
         }
     }
 }

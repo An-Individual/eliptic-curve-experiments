@@ -94,12 +94,12 @@ namespace ECExperiments.ECC
             }
             else
             {
-                if (data[0] != 0x02 && data[0] != 0.03)
+                if (data[0] != 0x02 && data[0] != 0x03)
                 {
                     throw new ArgumentException("Key prefix not recognized.", nameof(data));
                 }
 
-                bool shouldBeOdd = data[0] == 0.03;
+                bool shouldBeOdd = data[0] == 0x03;
 
                 int expectedLength = 1 + GetPrimeLength();
                 if (data.Length != expectedLength)
