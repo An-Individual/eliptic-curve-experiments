@@ -23,12 +23,12 @@ namespace ECExperiments.Bitcoin
             return Utils.ReadUnsignedBigEndianInt(data, 1, 32);
         }
 
-        public static string CreateBitcoinAddressString(byte[] compressedPublicKey)
+        public static string CreateBitcoinAddressString(byte[] publicKey)
         {
             // See https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses
             // for steps.
 
-            byte[] firstHash = SHA256.HashData(compressedPublicKey);
+            byte[] firstHash = SHA256.HashData(publicKey);
             // The built in method for RIPEMD160 was dropped in the jump to .NET 5
             // so we have to use a nuget package.
             byte[] ripemdHash = RIPEMD160.Create().ComputeHash(firstHash);

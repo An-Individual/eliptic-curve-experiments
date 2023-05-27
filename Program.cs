@@ -1,4 +1,5 @@
-﻿using ECExperiments.ECC;
+﻿using ECExperiments.Bitcoin;
+using ECExperiments.ECC;
 using System.Numerics;
 
 namespace ECExperiments
@@ -65,6 +66,7 @@ namespace ECExperiments
                     playground.Run();
                     break;
                 case WIF_PARSER:
+                    ParseAndPrintWIF(args);
                     break;
                 case SIGNER:
                     break;
@@ -75,6 +77,56 @@ namespace ECExperiments
                 case DECRYPTOR:
                     break;
             }
+        }
+
+        private static void ParseAndPrintWIF(string[] args)
+        {
+            string wif;
+            if(args.Length > 0)
+            {
+                wif = args[0];
+            }
+            else
+            {
+                Console.WriteLine("Enter a Bitcoin private key in Wallet Import Format (WIF):");
+                wif = Console.ReadLine().Trim();
+            }
+
+            bool publicKeyCompressed = wif.StartsWith("K") || wif.StartsWith("L") || wif.StartsWith("M");
+            Console.WriteLine($"Public key is {(publicKeyCompressed ? "compressed" : "uncompressed")}");
+
+            BigInteger privateKey = WIFUtils.WIFToPrivateKey(wif);
+            Console.WriteLine("Private Key:");
+            Console.WriteLine("    " + Convert.ToHexString(Utils.MakeUnsignedBigEndianArray(privateKey)));
+            Console.WriteLine();
+
+            ECEncryptor encryptor = new ECEncryptor(WeierstrasCurve.secp256k1);
+            encryptor.SetPrivateKey(privateKey);
+            BigPoint publicKey = encryptor.GetPublicKey();
+
+            Console.WriteLine("Public Key as Point:");
+            Console.WriteLine($"    X: {Convert.ToHexString(Utils.MakeUnsignedBigEndianArray(publicKey.X))}");
+            Console.WriteLine($"    Y: {Convert.ToHexString(Utils.MakeUnsignedBigEndianArray(publicKey.Y))}");
+            Console.WriteLine();
+
+            byte[] publicKeyData;
+            if (publicKeyCompressed)
+            {
+                publicKeyData = encryptor.ExportPublicKeyCompressed();
+            }
+            else
+            {
+                publicKeyData = encryptor.ExportPublicKey();
+            }
+
+            Console.WriteLine("Public Key as Byte Array:");
+            Console.WriteLine("    " + Convert.ToHexString(publicKeyData));
+            Console.WriteLine();
+
+            string address = WIFUtils.CreateBitcoinAddressString(publicKeyData);
+
+            Console.WriteLine("Wallet Address:");
+            Console.WriteLine("    " + address);
         }
     }
 }
