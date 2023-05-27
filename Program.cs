@@ -1,6 +1,7 @@
 ﻿using ECExperiments.Bitcoin;
 using ECExperiments.ECC;
 using System.Numerics;
+using System.Security.Cryptography;
 
 namespace ECExperiments
 {
@@ -27,41 +28,68 @@ namespace ECExperiments
 
         static void Main(string[] args)
         {
-            string experiment = null;
-            if(args.Length > 0)
+            if (args.Length > 0)
             {
-                experiment = args[0]?.ToLowerInvariant()?.Trim();
+                string experiment = args[0]?.ToLowerInvariant()?.Trim();
 
-                if(!EXPERIMENTS.Contains(experiment))
+                if (!EXPERIMENTS.Contains(experiment))
                 {
                     Console.WriteLine("Experiment not recognized.");
                 }
 
                 args = args.Skip(1).ToArray();
+
+                RunExperiment(experiment, args);
+
+                return;
             }
-            else
+
+            while (true)
             {
-                Console.WriteLine("Which experiment would you like to run?");
-                Console.WriteLine(PLAYGROUND);
-                Console.WriteLine(WIF_PARSER);
-                Console.WriteLine(MAKE_KEY);
-                Console.WriteLine(SIGNER);
-                Console.WriteLine(VALIDATOR);
-                Console.WriteLine(ENCRYPTOR);
-                Console.WriteLine(DECRYPTOR);
-
-                do
+                if(!ReadExperiment(out string experiment))
                 {
-                    if(experiment != null)
-                    {
-                        Console.WriteLine("Value not recognized. Please enter a valid experiment name.");
-                    }
-
-                    experiment = Console.ReadLine()?.ToLowerInvariant()?.Trim() ?? string.Empty;
+                    return;
                 }
-                while (!EXPERIMENTS.Contains(experiment));
-            }
 
+                RunExperiment(experiment, new string[] { });
+            }
+        }
+
+        private static bool ReadExperiment(out string experiment)
+        {
+            Console.WriteLine("Select an experiment or enter 'exit' to leave?");
+            Console.WriteLine(PLAYGROUND);
+            Console.WriteLine(WIF_PARSER);
+            Console.WriteLine(MAKE_KEY);
+            Console.WriteLine(SIGNER);
+            Console.WriteLine(VALIDATOR);
+            Console.WriteLine(ENCRYPTOR);
+            Console.WriteLine(DECRYPTOR);
+
+            experiment = null;
+
+            do
+            {
+                if (experiment != null)
+                {
+                    Console.WriteLine("Value not recognized. Please enter a valid experiment name.");
+                }
+
+                Console.Write("Selection: ");
+                experiment = Console.ReadLine()?.ToLowerInvariant()?.Trim() ?? string.Empty;
+
+                if (experiment == "exit")
+                {
+                    return false;
+                }
+            }
+            while (!EXPERIMENTS.Contains(experiment));
+
+            return true;
+        }
+
+        private static void RunExperiment(string experiment, string[] args)
+        {
             switch (experiment)
             {
                 case PLAYGROUND:
@@ -75,6 +103,7 @@ namespace ECExperiments
                     MakeKey();
                     break;
                 case SIGNER:
+                    MakeSignature(args);
                     break;
                 case VALIDATOR:
                     break;
@@ -151,6 +180,54 @@ namespace ECExperiments
 
             Console.WriteLine("Public Key:");
             Console.WriteLine("    " + Convert.ToHexString(publicKey));
+        }
+
+        private static void MakeSignature(string[] args)
+        {
+            ECEncryptor encryptor = new ECEncryptor(WeierstrasCurve.secp256k1);
+
+            byte[] privateKey;
+            if(args.Length > 0)
+            {
+                privateKey = Convert.FromHexString(args[0]);
+            }
+            else
+            {
+                Console.WriteLine("Enter the private key to use as a hex string:");
+                string hexString = Console.ReadLine().Trim();
+                privateKey = Convert.FromHexString(hexString);
+            }
+
+            encryptor.ImportPrivateKey(privateKey);
+
+            string filePath;
+            if(args.Length > 1)
+            {
+                filePath = args[1];
+            }
+            else
+            {
+                Console.WriteLine("Enter the path to the file to generate a signature for:");
+                filePath = Console.ReadLine().Trim();
+            }
+
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File does not exist.");
+                return;
+            }
+
+            Console.WriteLine("Reading file...");
+            byte[] fileData = File.ReadAllBytes(filePath);
+
+            Console.WriteLine("Hashing file with SHA256...");
+            byte[] hash = SHA256.HashData(fileData);
+
+            Console.WriteLine("Generating signature...");
+            byte[] signature = encryptor.SignHash(hash);
+
+            Console.WriteLine("Signature:");
+            Console.WriteLine("    " + Convert.ToHexString(signature));
         }
     }
 }
