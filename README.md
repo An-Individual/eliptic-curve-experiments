@@ -105,6 +105,8 @@ The curves used in Eliptic Curve cryptography include not just values for `a`, `
 
 ## Using Elliptic Curves to Hide Information
 
+See [this page](https://github.com/nakov/Practical-Cryptography-for-Developers-Book/blob/master/asymmetric-key-ciphers/ecc-encryption-decryption.md) for a more detailed explanation from which much has been borrowed.
+
 When using elliptic curves for cryptography, one does not simply invent numbers to create a curve. There are a number of pre-defined curves with names like `brainpoolP160r1`, `nistP256`, and `secp256k1`. They will generally be defined by the following things.
 
 * `A`: The `a` from the `y^2 = x^3 + a*x + b` equation.
