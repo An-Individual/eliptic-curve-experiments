@@ -175,11 +175,25 @@ namespace ECExperiments
 
             Console.WriteLine("Private Key:");
             Console.WriteLine("    " + Convert.ToHexString(privateKeyData));
+            Console.WriteLine();
 
-            byte[] publicKey = encryptor.ExportPublicKeyCompressed();
+            BigPoint publicKey = encryptor.GetPublicKey();
 
-            Console.WriteLine("Public Key:");
-            Console.WriteLine("    " + Convert.ToHexString(publicKey));
+            Console.WriteLine("Public Key as Point:");
+            Console.WriteLine($"    X: {Convert.ToHexString(Utils.MakeUnsignedBigEndianArray(publicKey.X))}");
+            Console.WriteLine($"    Y: {Convert.ToHexString(Utils.MakeUnsignedBigEndianArray(publicKey.Y))}");
+            Console.WriteLine();
+
+            byte[] publicKeyUncompressed = encryptor.ExportPublicKey();
+
+            Console.WriteLine("Uncompressed Public Key:");
+            Console.WriteLine("    " + Convert.ToHexString(publicKeyUncompressed));
+            Console.WriteLine();
+
+            byte[] publicKeyCompressed = encryptor.ExportPublicKeyCompressed();
+
+            Console.WriteLine("Compressed Public Key:");
+            Console.WriteLine("    " + Convert.ToHexString(publicKeyCompressed));
         }
 
         private static void MakeSignature(string[] args)
