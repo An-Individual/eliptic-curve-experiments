@@ -12,8 +12,6 @@ namespace ECExperiments
         private const string MAKE_KEY = "makekey";
         private const string SIGNER = "signer";
         private const string VALIDATOR = "validator";
-        private const string ENCRYPTOR = "encryptor";
-        private const string DECRYPTOR = "decryptor";
 
         private static readonly string[] EXPERIMENTS = new string[]
         {
@@ -21,9 +19,7 @@ namespace ECExperiments
             WIF_PARSER,
             MAKE_KEY,
             SIGNER,
-            VALIDATOR,
-            ENCRYPTOR,
-            DECRYPTOR,
+            VALIDATOR
         };
 
         static void Main(string[] args)
@@ -72,8 +68,6 @@ namespace ECExperiments
             Console.WriteLine("    " + MAKE_KEY);
             Console.WriteLine("    " + SIGNER);
             Console.WriteLine("    " + VALIDATOR);
-            Console.WriteLine("    " + ENCRYPTOR);
-            Console.WriteLine("    " + DECRYPTOR);
 
             experiment = null;
 
@@ -116,10 +110,6 @@ namespace ECExperiments
                     break;
                 case VALIDATOR:
                     ValidateSignature(args);
-                    break;
-                case ENCRYPTOR:
-                    break;
-                case DECRYPTOR:
                     break;
             }
         }
