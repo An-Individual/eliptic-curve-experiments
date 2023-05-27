@@ -158,6 +158,28 @@ namespace ECExperiments.ECC
             return result;
         }
 
+        public void ImportPrivateKey(byte[] data)
+        {
+            BigInteger privateKey = Utils.ReadUnsignedBigEndianInt(data, 0, data.Length);
+            
+            if(privateKey <= 0 || privateKey >= Curve.Order)
+            {
+                throw new Exception("The provided key is outside the valid range of values for the curve.");
+            }
+
+            SetPrivateKey(privateKey);
+        }
+
+        public byte[] ExportPrivateKey()
+        {
+            if(PrivateKey == 0)
+            {
+                throw new Exception("Private key has not been set.");
+            }
+
+            return Utils.MakeUnsignedBigEndianArray(PrivateKey, GetOrderLength());
+        }
+
         #endregion Key Methods
 
         #region Signature Methods
@@ -239,7 +261,7 @@ namespace ECExperiments.ECC
 
         #region Helper Methods
 
-        private BigInteger GenerateRandomPrivateKey(RandomNumberGenerator secureRandom = null)
+        public BigInteger GenerateRandomPrivateKey(RandomNumberGenerator secureRandom = null)
         {
             secureRandom ??= RandomNumberGenerator.Create();
             byte[] data = new byte[GetPrimeLength()];

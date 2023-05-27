@@ -8,6 +8,7 @@ namespace ECExperiments
     {
         private const string PLAYGROUND = "playground";
         private const string WIF_PARSER = "wifparser";
+        private const string MAKE_KEY = "makekey";
         private const string SIGNER = "signer";
         private const string VALIDATOR = "validator";
         private const string ENCRYPTOR = "encryptor";
@@ -17,6 +18,7 @@ namespace ECExperiments
         {
             PLAYGROUND,
             WIF_PARSER,
+            MAKE_KEY,
             SIGNER,
             VALIDATOR,
             ENCRYPTOR,
@@ -42,6 +44,7 @@ namespace ECExperiments
                 Console.WriteLine("Which experiment would you like to run?");
                 Console.WriteLine(PLAYGROUND);
                 Console.WriteLine(WIF_PARSER);
+                Console.WriteLine(MAKE_KEY);
                 Console.WriteLine(SIGNER);
                 Console.WriteLine(VALIDATOR);
                 Console.WriteLine(ENCRYPTOR);
@@ -67,6 +70,9 @@ namespace ECExperiments
                     break;
                 case WIF_PARSER:
                     ParseAndPrintWIF(args);
+                    break;
+                case MAKE_KEY:
+                    MakeKey();
                     break;
                 case SIGNER:
                     break;
@@ -127,6 +133,24 @@ namespace ECExperiments
 
             Console.WriteLine("Wallet Address:");
             Console.WriteLine("    " + address);
+        }
+
+        private static void MakeKey()
+        {
+            ECEncryptor encryptor = new ECEncryptor(WeierstrasCurve.secp256k1);
+
+            BigInteger privateKey = encryptor.GenerateRandomPrivateKey();
+            encryptor.SetPrivateKey(privateKey);
+
+            byte[] privateKeyData = encryptor.ExportPrivateKey();
+
+            Console.WriteLine("Private Key:");
+            Console.WriteLine("    " + Convert.ToHexString(privateKeyData));
+
+            byte[] publicKey = encryptor.ExportPublicKeyCompressed();
+
+            Console.WriteLine("Public Key:");
+            Console.WriteLine("    " + Convert.ToHexString(publicKey));
         }
     }
 }
